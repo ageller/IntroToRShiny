@@ -1,0 +1,169 @@
+---
+title: An R Markdown document converted from "test.ipynb"
+output: html_document
+---
+
+# Testing ideas for how to generate the plot
+
+I want to create a three-panel figure where the lower-left is a scatter plot and there are marginal histograms on the top and right.  There are multiple ways to do this in R, and I will explore three different options here.
+
+1. ```ggplot2``` + ```ggExtra```
+2. ```ggplot2``` + ```gtable``` + ```grid```
+3. ```ggplot2``` + ```plotly```
+
+```{r}
+# use the standard R old faithful data set : 
+# https://search.r-project.org/CRAN/refmans/mixComp/html/faithful.html
+#   eruptions : numeric, eruption time in mins
+#   waiting : numeric, waiting time to next eruption (in mins)
+data(faithful)
+head(faithful)
+```
+
+## 1. Test using ```ggplot2``` and ```ggExtra```
+
+```ggExtra``` has the ```ggMarginal``` function that easily creates marginal plots like I want with minimal code.
+
+```{r}
+library(ggplot2)
+library(ggExtra)
+```
+
+```{r}
+p <- ggplot(faithful, aes(eruptions, waiting)) + 
+    geom_point() + geom_density2d() + 
+    scale_x_continuous(limits = c(1, 6), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(40, 100), expand = c(0, 0)) +
+    labs(x ="Eruption Duration (min)", y = "Time Between Eruptions (min)") +
+    stat_smooth(method = "lm", formula = y ~ x, geom = "smooth", se = FALSE, color = "red") + #lm for linear 
+    theme_bw() 
+
+f <- ggMarginal(p, 
+    type = "histogram", 
+    margins = "both",
+    xparams = list(binwidth = 0.1),
+    yparams = list(binwidth = 1),
+)
+
+f
+```
+
+This figure looks nice, and it is easy to code, but there is some functionality that is missing:
+- I would like to have labels on the y axes of the histograms to show the counts.  This is apparently not possible with ```ggMarginal```.
+- In ```Shiny```, I would like to be able to use a brush to zoom in on the figure (or to select data points), but the Shiny brush does not work well with ```ggMarginal```.
+
+(Of course if you like the look of this figure and you don't need any user interaction directly with the plot, it would be perfectly fine to use with ```Shiny```.)
+
+## 2. Try using ```ggplot2``` + ```gtable``` + ```grid```
+
+These libraries give the user more control over the look of the plot.  However, in my opinion the syntax becomes combersome and confusing (e.g., in order to make sure that all the axes are properly aligned).
+
+```{r}
+library(ggplot2)
+library(gtable)
+library(grid)
+```
+
+```{r}
+# First, create each plot using ggplot being explicit about the margins so that all the axes line up as expected
+
+# Note on the ordering of the margins:
+#    margin(t = 0, r = 0, b = 0, l = 0)
+
+p <- ggplot(faithful, aes(eruptions, waiting)) + 
+    geom_point() + geom_density2d() + 
+    scale_x_continuous(limits = c(1, 6), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(40, 100), expand = c(0, 0)) +
+    labs(x ="Eruption Duration (min)", y = "Time Between Eruptions (min)") +
+    stat_smooth(method = "lm", formula = y ~ x, geom = "smooth", se = FALSE, color = "red") + #lm for linear 
+    theme_bw() +
+    theme(plot.margin = unit(c(0.1, 0.1, 1, 1), "cm"))
+
+
+hist_top <- ggplot(faithful, aes(eruptions)) + geom_histogram(binwidth = 0.1) +
+    scale_x_continuous(limits = c(1, 6), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(0, NA), expand = c(0, 0)) +
+    xlab("") + 
+    theme_classic() +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          plot.margin = unit(c(1, 0, -0.3, 1), "cm")
+    )
+
+hist_right <- ggplot(faithful, aes(waiting)) + geom_histogram(binwidth = 1) + coord_flip() + 
+    scale_x_continuous(limits = c(40, 100), expand = c(0, 0)) + 
+    scale_y_continuous(limits = c(0, NA), expand = c(0, 0)) +
+    xlab("") + 
+    theme_classic() +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          plot.margin = unit(c(0, 1, 1, -0.3), "cm")
+)
+
+
+# convert these ggplot objects to "grobs" for gtable
+g1 <- ggplotGrob(p)
+g2 <- ggplotGrob(hist_top)
+g3 <- ggplotGrob(hist_right)
+
+# make sure that the plot widths and heights are the same so that the axes line up
+g2$widths[2:5] <- as.list(g1$widths[2:5])
+g3$heights[2:5] <- as.list(g1$heights[2:5])
+
+# combine these into a matrix of plots and create the gtable
+mat <- matrix(list(g2, g1, nullGrob(), g3), nrow = 2)
+g <- gtable_matrix(name = "demo", grobs = mat, 
+                   widths = unit(c(5, 2), "in"), 
+                   heights = unit(c(2, 4), "in",))
+
+# use grid to show the figure
+grid.newpage()
+grid.draw(g)
+```
+
+This figure also looks fine, but it also does not play well with Shiny brushes.  (Of course if we didn't want any user interaction directly with the plot, it would be perfectly fine to use with Shiny.)
+
+## 3. Try using ```ggplot2``` + ```plotly```
+
+```Plotly``` is a fantastic library for creating interactive figures in R, Python and Javascript.  A very nice part about using Plotly in R is that you can often easily convert a ```ggplot``` object into a ```plotly``` object with the command ```ggplotly```.
+
+```{r}
+library(ggplot2)
+library(plotly)
+```
+
+```{r}
+# create the three panels using ggplot
+main_plot <- ggplot(faithful, aes(eruptions, waiting)) + 
+    geom_point() + geom_density2d() + 
+    scale_x_continuous(limits = c(1, 5.9), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(40, 99), expand = c(0, 0)) +
+    labs(x ="Eruption Duration (min)", y = "Time Between Eruptions (min)") +
+    stat_smooth(method = "lm", formula = y ~ x, geom = "smooth", se = FALSE, color = "red") + #lm for linear 
+    theme_bw()
+
+
+top_plot <- ggplot(faithful, aes(eruptions)) + geom_density() +
+    scale_x_continuous(limits = c(1, 6), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(0, NA), expand = c(0, 0)) +
+    theme_classic()
+
+
+right_plot <- ggplot(faithful, aes(waiting)) + geom_histogram(binwidth = 1) + coord_flip() + 
+    scale_x_continuous(limits = c(40, 100), expand = c(0, 0)) + 
+    scale_y_continuous(limits = c(0, NA), expand = c(0, 0)) +
+    theme_classic()
+
+
+# the layout the figure is controlled by Plotly's subplot function
+# subplot will also handle joining the axes and setting the plot widths, heights, margins
+s <- subplot(top_plot, plotly_empty(), main_plot, right_plot, 
+    nrows = 2, heights = c(0.2, 0.8), widths = c(0.8, 0.2), margin = 0,
+    shareX = TRUE, shareY = TRUE)
+
+# show the plotly figure (which allows user interaction)
+ggplotly(s)
+```
+
+This figure looks great and will behave nicely in ```Shiny```.  As a bonus, ```Plotly``` will handle zooming, tooltips, saving the figure, etc., so we don't have to code that functionality manually into our Shiny app!
+
