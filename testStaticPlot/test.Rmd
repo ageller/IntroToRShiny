@@ -11,6 +11,11 @@ I want to create a three-panel figure where the lower-left is a scatter plot and
 2. ```ggplot2``` + ```gtable``` + ```grid```
 3. ```ggplot2``` + ```plotly```
 
+This notebook is meant to accompany my Introduction to R Shiny workshop, with materials on my [GitHub repo here](https://github.com/ageller/IntroToRShiny).
+
+---
+*Author: Aaron M. Geller (Oct. 2022)*
+
 ```{r}
 # use the standard R old faithful data set : 
 # https://search.r-project.org/CRAN/refmans/mixComp/html/faithful.html
