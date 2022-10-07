@@ -5,15 +5,16 @@ output: html_document
 
 # Testing ideas for how to generate the plot
 
-I want to create a three-panel figure where the lower-left is a scatter plot and there are marginal histograms on the top and right.  There are multiple ways to do this in R, and I will explore three different options here.
+I want to create a three-panel figure where the lower-left is a scatter plot and there are marginal histograms on the top and right. There are multiple ways to do this in R, and I will explore three different options here.
 
-1. ```ggplot2``` + ```ggExtra```
-2. ```ggplot2``` + ```gtable``` + ```grid```
-3. ```ggplot2``` + ```plotly```
+1.  `ggplot2` + `ggExtra`
+2.  `ggplot2` + `gtable` + `grid`
+3.  `ggplot2` + `plotly`
 
 This notebook is meant to accompany my Introduction to R Shiny workshop, with materials on my [GitHub repo here](https://github.com/ageller/IntroToRShiny).
 
----
+------------------------------------------------------------------------
+
 *Author: Aaron M. Geller (Oct. 2022)*
 
 ```{r}
@@ -25,9 +26,9 @@ data(faithful)
 head(faithful)
 ```
 
-## 1. Test using ```ggplot2``` and ```ggExtra```
+## 1. Test using `ggplot2` and `ggExtra`
 
-```ggExtra``` has the ```ggMarginal``` function that easily creates marginal plots like I want with minimal code.
+`ggExtra` has the `ggMarginal` function that easily creates marginal plots like I want with minimal code.
 
 ```{r}
 library(ggplot2)
@@ -53,15 +54,13 @@ f <- ggMarginal(p,
 f
 ```
 
-This figure looks nice, and it is easy to code, but there is some functionality that is missing:
-- I would like to have labels on the y axes of the histograms to show the counts.  This is apparently not possible with ```ggMarginal```.
-- In ```Shiny```, I would like to be able to use a brush to zoom in on the figure (or to select data points), but the Shiny brush does not work well with ```ggMarginal```.
+This figure looks nice, and it is easy to code, but there is some functionality that is missing: - I would like to have labels on the y axes of the histograms to show the counts. This is apparently not possible with `ggMarginal`. - In `Shiny`, I would like to be able to use a brush to zoom in on the figure (or to select data points), but the Shiny brush does not work well with `ggMarginal`.
 
-(Of course if you like the look of this figure and you don't need any user interaction directly with the plot, it would be perfectly fine to use with ```Shiny```.)
+(Of course if you like the look of this figure and you don't need any user interaction directly with the plot, it would be perfectly fine to use with `Shiny`.)
 
-## 2. Try using ```ggplot2``` + ```gtable``` + ```grid```
+## 2. Try using `ggplot2` + `gtable` + `grid`
 
-These libraries give the user more control over the look of the plot.  However, in my opinion the syntax becomes combersome and confusing (e.g., in order to make sure that all the axes are properly aligned).
+These libraries give the user more control over the look of the plot. However, in my opinion the syntax becomes combersome and confusing (e.g., in order to make sure that all the axes are properly aligned).
 
 ```{r}
 library(ggplot2)
@@ -126,11 +125,11 @@ grid.newpage()
 grid.draw(g)
 ```
 
-This figure also looks fine, but it also does not play well with Shiny brushes.  (Of course if we didn't want any user interaction directly with the plot, it would be perfectly fine to use with Shiny.)
+This figure also looks fine, but it also does not play well with Shiny brushes. (Of course if we didn't want any user interaction directly with the plot, it would be perfectly fine to use with Shiny.)
 
-## 3. Try using ```ggplot2``` + ```plotly```
+## 3. Try using `ggplot2` + `plotly`
 
-```Plotly``` is a fantastic library for creating interactive figures in R, Python and Javascript.  A very nice part about using Plotly in R is that you can often easily convert a ```ggplot``` object into a ```plotly``` object with the command ```ggplotly```.
+`Plotly` is a fantastic library for creating interactive figures in R, Python and Javascript. A very nice part about using Plotly in R is that you can often easily convert a `ggplot` object into a `plotly` object with the command `ggplotly`.
 
 ```{r}
 library(ggplot2)
@@ -149,13 +148,13 @@ main_plot <- ggplot(faithful, aes(eruptions, waiting)) +
 
 
 top_plot <- ggplot(faithful, aes(eruptions)) + geom_density() +
-    scale_x_continuous(limits = c(1, 6), expand = c(0, 0)) +
+    scale_x_continuous(limits = c(1, 5.9), expand = c(0, 0)) +
     scale_y_continuous(limits = c(0, NA), expand = c(0, 0)) +
     theme_classic()
 
 
 right_plot <- ggplot(faithful, aes(waiting)) + geom_histogram(binwidth = 1) + coord_flip() + 
-    scale_x_continuous(limits = c(40, 100), expand = c(0, 0)) + 
+    scale_x_continuous(limits = c(40, 99), expand = c(0, 0)) + 
     scale_y_continuous(limits = c(0, NA), expand = c(0, 0)) +
     theme_classic()
 
@@ -170,5 +169,4 @@ s <- subplot(top_plot, plotly_empty(), main_plot, right_plot,
 ggplotly(s)
 ```
 
-This figure looks great and will behave nicely in ```Shiny```.  As a bonus, ```Plotly``` will handle zooming, tooltips, saving the figure, etc., so we don't have to code that functionality manually into our Shiny app!
-
+This figure looks great and will behave nicely in `Shiny`. As a bonus, `Plotly` will handle zooming, tooltips, saving the figure, etc., so we don't have to code that functionality manually into our Shiny app!
