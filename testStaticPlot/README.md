@@ -5,4 +5,4 @@ rmarkdown::convert_ipynb('test.ipynb')
 
 (Please note that the Plotly figure will only be interactive in the Jupyter notebook.)
 
-A working version of this notebook is available [on Google Colab here](https://drive.google.com/file/d/1FIFGOQ7Fe4TYhFXZPawWD5-4mTdwdyH7/view?usp=sharing).
+A working version of this notebook is available [on Google Colab here](https://colab.research.google.com/drive/1JPWfKgy4Tr7qTRPDEO-50ZHaPk0JRdg-?usp=sharing).
