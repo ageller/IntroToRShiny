@@ -41,12 +41,12 @@ ui <- fluidPage(
       # https://shiny.rstudio.com/reference/shiny/latest/sliderInput.html
       conditionalPanel(
         condition = "input.marginalFormat == 'histogram' && input.marginsToShow != 'y' && input.marginsToShow != 'none'" ,
-        sliderInput("xbinwidth", "Eruption Duration binwidth (min):", 
+        sliderInput("xbinwidth", "Eruption Duration binwidth (min.):", 
                     min = 1e-3, max = 1, value = 0.1),
       ),
       conditionalPanel(
         condition = "input.marginalFormat == 'histogram' && input.marginsToShow != 'x' && input.marginsToShow != 'none'" ,
-        sliderInput("ybinwidth", "Time Between Erruptions binwidth (min):", 
+        sliderInput("ybinwidth", "Time Between Erruptions binwidth (min.):", 
                     min = 1e-3, max = 20, value = 1),
       ),
       
@@ -88,7 +88,7 @@ server <- function(input, output) {
       geom_point() + 
       scale_x_continuous(limits = c(1, 5.9), expand = c(0, 0)) +
       scale_y_continuous(limits = c(40, 99), expand = c(0, 0)) +
-      labs(x ="Eruption Duration (min)", y = "Time Between Eruptions (min)") +
+      labs(x ="Eruption Duration (min.)", y = "Time Between Eruptions (min.)") +
       theme_bw() + 
       theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
     

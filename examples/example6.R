@@ -39,7 +39,7 @@ ui <- fluidPage(
       
       # slider to choose the bin size for the x axis (only relevant for histogram margin type)
       # https://shiny.rstudio.com/reference/shiny/latest/sliderInput.html
-      sliderInput("xbinwidth", "Eruption Duration binwidth (min):", 
+      sliderInput("xbinwidth", "Eruption Duration binwidth (min.):", 
                   min = 1e-3, max = 1, value = 0.1),
         
       # checkboxes to turn on/off plot elements
@@ -80,7 +80,7 @@ server <- function(input, output) {
       geom_point() + 
       scale_x_continuous(limits = c(1, 5.9), expand = c(0, 0)) +
       scale_y_continuous(limits = c(40, 99), expand = c(0, 0)) +
-      labs(x ="Eruption Duration (min)", y = "Time Between Eruptions (min)") +
+      labs(x ="Eruption Duration (min.)", y = "Time Between Eruptions (min.)") +
       theme_bw() + 
       theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
     
