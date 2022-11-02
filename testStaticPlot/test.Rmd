@@ -54,13 +54,17 @@ f <- ggMarginal(p,
 f
 ```
 
-This figure looks nice, and it is easy to code, but there is some functionality that is missing: - I would like to have labels on the y axes of the histograms to show the counts. This is apparently not possible with `ggMarginal`. - In `Shiny`, I would like to be able to use a brush to zoom in on the figure (or to select data points), but the Shiny brush does not work well with `ggMarginal`.
+This figure looks nice, and it is easy to code, but there is some functionality that is missing:
+
+\- I would like to have labels on the y axes of the histograms to show the counts. This is apparently not possible with `ggMarginal`.
+
+\- In `Shiny`, I would like to be able to use a brush to zoom in on the figure (or to select data points), but the Shiny brush does not work well with `ggMarginal`.
 
 (Of course if you like the look of this figure and you don't need any user interaction directly with the plot, it would be perfectly fine to use with `Shiny`.)
 
 ## 2. Try using `ggplot2` + `gtable` + `grid`
 
-These libraries give the user more control over the look of the plot. However, in my opinion the syntax becomes combersome and confusing (e.g., in order to make sure that all the axes are properly aligned).
+These libraries give the user more control over the look of the plot. However, in my opinion the syntax becomes cumbersome and confusing (e.g., in order to make sure that all the axes are properly aligned).
 
 ```{r}
 library(ggplot2)
