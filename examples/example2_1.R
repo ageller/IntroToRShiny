@@ -37,7 +37,6 @@ ui <- fluidPage(
             )
         ),
 
-
         # Main panel for displaying outputs 
         mainPanel(
             # https://shiny.rstudio.com/reference/shiny/latest/plotOutput.html

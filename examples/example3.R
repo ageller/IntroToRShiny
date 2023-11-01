@@ -31,7 +31,6 @@ ui <- fluidPage(
             )
         ),
 
-
         # Main panel for displaying outputs 
         mainPanel(
             # https://shiny.rstudio.com/reference/shiny/latest/plotOutput.html
@@ -58,7 +57,6 @@ server <- function(input, output) {
             labs(x ="Eruption Duration (min.)", y = "Time Between Eruptions (min.)") +
             theme_bw() + 
             theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-
 
         # add the contours if requested by the user
         if (input$showContours) main_plot <- main_plot + geom_density2d()

@@ -74,7 +74,6 @@ server <- function(input, output) {
             theme_bw() + 
             theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
-
         # add the contours if requested by the user
         if (input$showContours) main_plot <- main_plot + geom_density2d()
 
