@@ -15,7 +15,7 @@ The presentation is also available on [Google Slides here](https://docs.google.c
 
 ## Additional Resources
 
-- This [Cheat Sheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf) has lots of helpful information.
+- This [Cheat Sheet](https://shiny.posit.co/r/articles/start/cheatsheet/index.html) has lots of helpful information.
 
 
 ## Acknowledgements  
